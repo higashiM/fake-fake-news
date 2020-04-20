@@ -1,0 +1,92 @@
+/* .articlesWrapper {
+  height: 1000px;
+}
+ */
+
+.page__button {
+  background-color: transparent;
+
+  box-shadow: 0px 0px 0px transparent;
+
+  border: 0px solid transparent;
+
+  text-shadow: 0px 0px 0px transparent;
+}
+.articlesGrid__Title {
+  grid-area: title;
+  font-size: larger;
+  font-weight: bold;
+}
+
+.articlesGrid__Topic {
+  grid-area: topic;
+}
+
+.articlesGrid__Votes {
+  grid-area: votes;
+  font-family: "Roboto Slab";
+  font-size: small;
+  align-items: center;
+}
+.articlesGrid__Created {
+  grid-area: created;
+  font-family: "Roboto Slab";
+  font-size: small;
+}
+.articlesGrid__Comments {
+  grid-area: comments;
+  font-family: "Roboto Slab";
+  font-size: small;
+  text-align: center;
+}
+
+.articlesGrid__Author {
+  grid-area: author;
+  font-family: "Roboto Slab";
+}
+
+.articlesGrid:hover {
+  cursor: pointer;
+}
+
+.articlesGrid {
+  color: white;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-right: 10px;
+  display: grid;
+  grid-template-columns: 2fr 2fr;
+
+  grid-template-areas:
+    "created created created"
+    "title title title"
+    "author votes comments";
+}
+.articlesLink {
+  color: white;
+  text-decoration: none;
+}
+.articlesLink:visited {
+  color: white;
+  text-decoration: none;
+}
+
+.articlesGrid > span {
+  border-left: 1px transparent black;
+  border-bottom: 1px transparent black;
+  border-top: 1px transparent black;
+  border-right: 1px transparent black;
+}
+
+.articlesGrid__Selected {
+  color: gold;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-right: 10px;
+  display: grid;
+  grid-template-columns: 2fr 2fr;
+  grid-template-areas:
+    "created created created"
+    "title title title"
+    "author votes comments";
+}

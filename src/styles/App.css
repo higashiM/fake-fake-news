@@ -1,0 +1,67 @@
+@import "ArticleCard.css";
+@import "Comments.css";
+@import "Articles.css";
+@import "ArticleInput.css";
+@import "Login.css";
+.app {
+  font-family: "Maven Pro";
+}
+.header {
+  grid-area: header;
+  color: white;
+  background-color: slateblue;
+  font-size: x-large;
+  text-align: center;
+}
+.main-section {
+  grid-area: main;
+  color: white;
+  background-color: slateblue;
+}
+
+.sub-section {
+  grid-area: subs;
+  color: black;
+  background-color: white;
+}
+.nav {
+  grid-area: nav;
+  color: #3b3a30;
+  background-color: slateblue;
+}
+.user__login {
+  grid-area: login;
+  color: white;
+  background-color: slateblue;
+  font-size: large;
+}
+.footer {
+  grid-area: footer;
+  color: #3b3a30;
+  background-color: #eaece5;
+}
+.app {
+  /*   max-width: 1024px;
+  min-height: 512px; */
+  margin: 0 auto;
+}
+
+.app > * {
+  border: 2px solid grey;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.app {
+  display: grid;
+  grid-template-columns: 3fr 3fr 3fr;
+  grid-template-rows: 1fr 18fr 1fr;
+  grid-template-areas:
+    "nav header login"
+    "main subs subs"
+    "footer footer footer";
+}
+
+.missingFields {
+  color: red;
+}

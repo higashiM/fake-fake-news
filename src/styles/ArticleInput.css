@@ -1,0 +1,50 @@
+.articleInput__title {
+  grid-area: title;
+}
+
+.articleInput__topic {
+  grid-area: topic;
+}
+.articleInput__body {
+  grid-area: body;
+}
+.articleInput__image {
+  grid-area: image;
+}
+
+.articleInput__submitButton {
+  grid-area: submit;
+}
+
+.articleInput__clearButton {
+  grid-area: clear;
+}
+
+.articleInput__newTopicSlug {
+  grid-area: newtopicslug;
+}
+.articleInput__newTopicDesc {
+  grid-area: newtopicdesc;
+}
+.articleInput__previewimage {
+  grid-area: imagepreview;
+}
+
+.articleInput__form {
+  display: grid;
+  grid-template-columns: 2fr;
+  grid-template-areas:
+    "title"
+    "topic "
+    "newtopicslug"
+    "newtopicdesc"
+    "body"
+    "image"
+    "imagepreview"
+    "submit"
+    "clear";
+}
+
+.articleInput__form > div {
+  padding: 8px 4px;
+}

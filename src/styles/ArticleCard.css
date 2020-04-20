@@ -1,0 +1,38 @@
+.mainArticleGrid__Title {
+  grid-area: title;
+  font-weight: bold;
+  font-size: large;
+}
+
+.mainArticleGrid__Topic {
+  grid-area: topic;
+}
+.mainArticleGrid__Body {
+  grid-area: body;
+}
+
+.mainArticleGrid__VoteButton {
+  grid-area: votebutton;
+}
+
+.mainArticleGrid__Votes {
+  grid-area: votes;
+}
+.mainArticleGrid__Created {
+  grid-area: created;
+}
+
+.mainArticleGrid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+
+  grid-template-areas:
+    "title title title"
+    "topic votes votebutton"
+    "created created created"
+    "body body body";
+}
+
+.mainArticleGrid > span {
+  padding: 8px 4px;
+}

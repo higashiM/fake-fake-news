@@ -1,0 +1,42 @@
+.commentsWrapper {
+  height: 500px;
+  overflow-y: scroll;
+  color: black;
+}
+
+.commentsGrid__Body {
+  grid-area: body;
+}
+
+.commentsGrid__VoteButton {
+  grid-area: votebutton;
+}
+
+.commentsGrid__Votes {
+  grid-area: votes;
+}
+.commentsGrid__Created {
+  grid-area: created;
+}
+
+textarea {
+  background-color: whitesmoke;
+}
+
+.commentsGrid {
+  padding: 0px 0px 5px 0px;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  background-color: white;
+
+  border-top: 1px solid black;
+
+  grid-template-areas:
+    "body body"
+    "votes votebutton"
+    "created created";
+}
+
+.commentsGrid > span {
+  padding: 8px 4px;
+}
