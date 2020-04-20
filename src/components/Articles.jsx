@@ -27,9 +27,17 @@ export default class Articles extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props !== prevProps) {
-      this.setState({ p: 1, selectedArticle: 0 }, () => this.loadPage());
+    if (
+      (this.props.author !== prevProps.author) |
+      (this.props.topic !== prevProps.topic)
+    ) {
+      this.setState({ p: 1 }, () => this.loadPage());
     }
+
+    if (this.props.article_id !== prevProps.article_id)
+      this.setState({ selectedArticle: this.props.article_id }, () =>
+        this.loadPage()
+      );
   }
 
   loadPage = () => {
