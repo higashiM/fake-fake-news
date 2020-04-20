@@ -14,8 +14,9 @@ class App extends React.Component {
       username: "Default",
       commentVotes: "",
       articleVotes: {},
-      newTopic: "",
     },
+    newTopic: "",
+    firstarticle: "",
   };
   setNewTopic = (newTopic) => {
     this.setState({ newTopic });

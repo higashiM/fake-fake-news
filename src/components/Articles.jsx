@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { navigate } from "@reach/router";
 import * as api from "../utils/api";
 import * as func from "../utils/functions";
 //import * as gqlapi from "../utils/gqlapi";
@@ -27,7 +28,7 @@ export default class Articles extends Component {
 
   componentDidUpdate(prevProps) {
     if (this.props !== prevProps) {
-      this.setState({ p: 1 }, () => this.loadPage());
+      this.setState({ p: 1, selectedArticle: 0 }, () => this.loadPage());
     }
   }
 
@@ -57,6 +58,12 @@ export default class Articles extends Component {
           total_count: data.total_count,
           maxPage: maxPage,
         });
+      })
+      .then(() => {
+        if (this.state.selectedArticle === 0)
+          navigate(
+            `/authors/All/topics/All/${this.state.articles[0].article_id}`
+          );
       })
 
       .catch((error) => {
