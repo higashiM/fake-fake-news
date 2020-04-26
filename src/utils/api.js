@@ -97,3 +97,33 @@ export const addtopic = async (topic) => {
 
   return data;
 };
+
+export const addArticleVote = async (article_id, username, votevalue) => {
+  const { data } = await api.post(`/votes/article/${article_id}`, {
+    username,
+    votevalue,
+  });
+
+  return data;
+};
+
+export const addCommentVote = async (comment_id, username, votevalue) => {
+  const { data } = await api.post(`/votes/comment/${comment_id}`, {
+    username,
+    votevalue,
+  });
+
+  return data;
+};
+
+export const getUserArticleVotes = async (username) => {
+  const { data } = await api.get(`/votes/${username}/articlevotes`);
+
+  return data;
+};
+
+export const getUserCommentVotes = async (username) => {
+  const { data } = await api.get(`/votes/${username}/commentvotes`);
+
+  return data;
+};

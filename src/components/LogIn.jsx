@@ -72,6 +72,7 @@ export default class LogIn extends Component {
         <span className="user__options">
           <Menu>
             <MenuButton>add new article</MenuButton>
+
             <MenuList>
               <MenuLink
                 as={Link}

@@ -43,7 +43,6 @@ export default class ArticleInput extends Component {
 
       .then(() => this.postArticle(article))
       .catch((error) => {
-        console.log(error);
         const { status, data } = error.response;
         this.setState({
           submitArticleError: {

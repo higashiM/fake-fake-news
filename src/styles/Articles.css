@@ -1,7 +1,6 @@
-/* .articlesWrapper {
-  height: 1000px;
+.articlesWrapper {
+  height: 100vh;
 }
- */
 
 .page__button {
   background-color: transparent;

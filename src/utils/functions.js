@@ -1,3 +1,5 @@
+import React from "react";
+
 export const timeDiffString = (timeCreated) => {
   const timeNow = new Date().getTime();
   const seconds = Math.floor((timeNow - timeCreated) / 1000);
@@ -41,4 +43,34 @@ export const timeDiffString = (timeCreated) => {
       return (output += " ago");
     }
   }
+};
+
+export const userVoteTransform = (userVotes) => {
+  const lookUp = {};
+
+  if (userVotes === []) return lookUp;
+
+  if (userVotes[0].article_id) {
+    userVotes.forEach((vote) => {
+      lookUp[vote.article_id] = vote.votevalue;
+    });
+  } else {
+    userVotes.forEach((vote) => {
+      lookUp[vote.comment_id] = vote.votevalue;
+    });
+  }
+
+  return lookUp;
+};
+
+export const faces = (votes) => {
+  return votes > 0 ? (
+    <span role="img" aria-label="Smiley face">
+      😊 {votes} votes
+    </span>
+  ) : (
+    <span role="img" aria-label="Sad face">
+      😢 {votes} votes
+    </span>
+  );
 };

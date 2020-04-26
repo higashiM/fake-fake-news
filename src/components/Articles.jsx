@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { navigate } from "@reach/router";
+
 import * as api from "../utils/api";
 import * as func from "../utils/functions";
 //import * as gqlapi from "../utils/gqlapi";
@@ -16,7 +16,7 @@ export default class Articles extends Component {
     selectedArticle: 0,
     sortButton: "Sort By",
     sort_by: "",
-    limit: 10,
+    limit: 6,
     p: 1,
     maxPage: "",
     total_count: "",
@@ -67,12 +67,10 @@ export default class Articles extends Component {
           maxPage: maxPage,
         });
       })
-      .then(() => {
+      /*   .then(() => {
         if (this.state.selectedArticle === 0)
-          navigate(
-            `/authors/All/topics/All/${this.state.articles[0].article_id}`
-          );
-      })
+          //navigate(`/authors/All/topics/All/${this.state.articles[0].article_id}`);
+      }) */
 
       .catch((error) => {
         const { status, data } = error.response;
@@ -210,16 +208,7 @@ export default class Articles extends Component {
                 </span>
                 <span className="articlesGrid__Votes">
                   {" "}
-                  {article.votes > 0 ? (
-                    <span role="img" aria-label="Smiley face">
-                      😊
-                    </span>
-                  ) : (
-                    <span role="img" aria-label="Sad face">
-                      😢
-                    </span>
-                  )}{" "}
-                  {article.votes}
+                  {func.faces(article.votes)}
                 </span>
               </div>
             </Link>

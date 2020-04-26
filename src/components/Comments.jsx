@@ -2,47 +2,103 @@ import React, { Component } from "react";
 import * as func from "../utils/functions";
 import * as api from "../utils/api";
 import Loader from "./Loader";
+import Voting from "./Voting";
 export default class Comments extends Component {
-  state = { comments: [], hideComments: true };
-
+  state = {
+    userVotes: "",
+    newVotes: {},
+    comments: [],
+    commentsError: null,
+    limit: 5,
+    maxPageLimit: 5,
+    p: 1,
+    maxPage: 1,
+  };
   componentDidUpdate(prevProps, prevState) {
-    if (prevProps !== this.props) {
-      this.loadPage();
-    }
-  }
-  componentDidMount() {
-    this.loadPage();
+    if (this.props.article_id !== prevProps.article_id) this.setPageParams();
   }
 
-  loadPage = () => {
-    const params = { limit: "100" };
-    api.getcomments(this.props.article_id, params).then((data) => {
-      this.setState({
-        comments: data.comments,
-        isloading: false,
-      });
+  setPageParams = () => {
+    const maxPage = Math.floor(this.props.commentCount / this.state.limit);
+    const maxPageLimit =
+      (this.props.commentCount % this.state.limit) + this.state.limit;
+
+    this.setState({ p: 1, maxPage, maxPageLimit, isloading: true }, () => {
+      this.loadPage();
     });
   };
+
+  componentDidMount() {
+    this.setPageParams();
+  }
+
+  onScroll = (e) => {
+    const { p, maxPage } = this.state;
+
+    const bottom =
+      e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;
+
+    const top = e.target.scrollTop === 0;
+
+    if (bottom) {
+      const newP = Math.max(Math.min(p + 1, maxPage), 1);
+
+      if (p !== newP) {
+        this.setState({ p: newP }, () => this.loadPage());
+
+        e.target.scrollTop = 5;
+      }
+    }
+    if (top) {
+      const newP = Math.max(Math.min(p - 1, maxPage), 1);
+
+      if (p !== newP) {
+        this.setState({ p: newP }, () => this.loadPage());
+
+        e.target.scrollTop = e.target.scrollHeight - e.target.clientHeight - 5;
+      }
+    }
+  };
+
+  loadPage = () => {
+    const username = this.props.user.username;
+    let newlimit = this.state.limit;
+    const { p, maxPage, maxPageLimit } = this.state;
+    if (p === maxPage) newlimit = maxPageLimit;
+
+    const params = { limit: newlimit, p };
+
+    Promise.all([
+      api.getcomments(this.props.article_id, params),
+      api.getUserCommentVotes(username),
+    ])
+      .then(([comData, voteData]) => {
+        let lookup = "";
+        if (voteData.votes.length > 0)
+          lookup = func.userVoteTransform(voteData.votes);
+        this.setState({
+          comments: comData.comments,
+          isloading: false,
+          p: p,
+          userVotes: lookup,
+          newVotes: {},
+        });
+      })
+      .catch((error) => {
+        const { status, data } = error.response;
+        this.setState({
+          commentsError: {
+            status: status,
+            msg: data.message,
+          },
+        });
+        console.dir(error.response.data.message);
+      });
+  };
+
   deleteComment = (comment_id) => {
     api.deletecomment(comment_id).then((data) => {
       this.loadPage();
-    });
-  };
-
-  voteComment = (comment_id, vote) => {
-    if (!this.props.user.commentVotes[comment_id]) {
-      this.props.addCommentUserVotes(comment_id, vote);
-      api.votecomment(comment_id, vote).then((data) => {
-        this.loadPage();
-      });
-    }
-  };
-
-  toggleHideComment = () => {
-    this.setState((state) => {
-      const newHideComments = !state.hideComments;
-
-      return { hideComments: newHideComments };
     });
   };
 
@@ -50,34 +106,38 @@ export default class Comments extends Component {
     this.deleteComment(comment_id);
   };
 
-  handleUpVote = (comment_id) => {
-    const vote = 1;
-    this.voteComment(comment_id, vote);
-  };
-
-  handleDownVote = (comment_id) => {
-    const vote = -1;
-    this.voteComment(comment_id, vote);
-  };
-
   handleShowComment = () => {
     this.toggleHideComment();
   };
+
+  didVote = (id, value) => {
+    this.setState((state) => {
+      const votes = {
+        ...state.newVotes,
+        [id]: value,
+      };
+
+      return { newVotes: votes };
+    });
+  };
+
   render() {
-    const { comments, isloading, hideComments } = this.state;
+    const username = this.props.user.username;
+    const { comments, isloading, newVotes, userVotes } = this.state;
 
     if (isloading) return <Loader />;
 
-    return hideComments ? (
-      <h4>
-        Comments <button onClick={this.handleShowComment}>on</button>
-      </h4>
-    ) : (
+    return (
       <main>
-        <h4>
-          Comments <button onClick={this.handleShowComment}>off</button>
-        </h4>
-        <div className="commentsWrapper">
+        <h4>Comments</h4>
+        <div
+          className="commentsWrapper"
+          style={{
+            height: "300px",
+            overflow: "scroll",
+          }}
+          onScroll={this.onScroll}
+        >
           {comments.map((comment) => {
             const timeCreated = new Date(comment.created_at).getTime();
             const postedWhen = func.timeDiffString(timeCreated);
@@ -86,7 +146,9 @@ export default class Comments extends Component {
               <div key={comment.comment_id} className="commentsGrid">
                 <span className="commentsGrid__Body">{comment.body}</span>
                 <span className="commentsGrid__Votes">
-                  Votes: {comment.votes}
+                  {newVotes[comment.comment_id]
+                    ? func.faces(comment.votes + newVotes[comment.comment_id])
+                    : func.faces(comment.votes)}
                 </span>
                 <span className="commentsGrid__Created">
                   Posted {postedWhen} by {comment.author}
@@ -101,26 +163,15 @@ export default class Comments extends Component {
                       Delete!
                     </button>{" "}
                   </span>
-                ) : !this.props.user.commentVotes[comment.comment_id] ? (
-                  <span className="commentsGrid__VoteButton">
-                    {" "}
-                    <button
-                      onClick={() => this.handleUpVote(comment.comment_id)}
-                    >
-                      +Vote
-                    </button>{" "}
-                    <button
-                      onClick={() => this.handleDownVote(comment.comment_id)}
-                    >
-                      -Vote
-                    </button>{" "}
-                  </span>
                 ) : (
                   <span className="commentsGrid__VoteButton">
-                    you voted{" "}
-                    {this.props.user.commentVotes[comment.comment_id] === 1
-                      ? "+"
-                      : "-"}
+                    <Voting
+                      didVote={this.didVote}
+                      uservotes={userVotes}
+                      voteTargetId={comment.comment_id}
+                      voteTargetType="comment"
+                      username={username}
+                    ></Voting>
                   </span>
                 )}
               </div>

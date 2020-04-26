@@ -4,7 +4,9 @@
 @import "ArticleInput.css";
 @import "Login.css";
 .app {
+  max-height: 100vh;
   font-family: "Maven Pro";
+  overflow: hidden;
 }
 .header {
   grid-area: header;

@@ -21,16 +21,19 @@
 .mainArticleGrid__Created {
   grid-area: created;
 }
+.mainArticleGrid__Image {
+  grid-area: image;
+}
 
 .mainArticleGrid {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
 
   grid-template-areas:
-    "title title title"
-    "topic votes votebutton"
-    "created created created"
-    "body body body";
+    "image title title"
+    "image topic created"
+    "image votes votebutton"
+    "body body body ";
 }
 
 .mainArticleGrid > span {

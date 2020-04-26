@@ -24,19 +24,21 @@ export default class ArticleCard extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevProps !== this.props) {
+    if (prevProps.article_id !== this.props.article_id) {
       if (this.props.article_id) {
-        this.loadPage();
+        this.setState({ isloading: true }, () => this.loadPage());
       }
     }
   }
   loadPage = () => {
+    const article_id = this.props.article_id;
+    const params = { article_id };
     //window.scrollTo(0, 0);
     api
-      .getarticle(this.props.article_id)
+      .getarticles(params)
       .then((data) => {
         this.setState({
-          article: data.article,
+          article: data.articles[0],
           isloading: false,
           isDeleted: false,
           articleError: null,
@@ -82,7 +84,6 @@ export default class ArticleCard extends Component {
           user={this.props.user}
           article={article}
           articleDeletedToggle={this.articleDeletedToggle}
-          addArticleUserVotes={this.props.addArticleUserVotes}
         ></ArticleDisplay>
 
         <CommentInput
@@ -92,7 +93,7 @@ export default class ArticleCard extends Component {
         ></CommentInput>
 
         <Comments
-          addCommentUserVotes={this.props.addCommentUserVotes}
+          commentCount={this.state.article.comment_count}
           user={this.props.user}
           article_id={this.props.article_id}
         ></Comments>

@@ -1,92 +1,90 @@
 import React, { Component } from "react";
 import * as api from "../utils/api";
+import * as func from "../utils/functions";
+import Voting from "./Voting";
 export default class ArticleDisplay extends Component {
-  state = { vote: 0 };
+  state = { userVotes: "", newVotes: {} };
 
-  componentDidUpdate(prevProps) {
-    if (this.props !== prevProps) {
-      this.setState({ vote: 0 });
+  componentDidMount() {
+    this.getArticleVotes(this.props.user.username);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (
+      this.props.article !== prevProps.article ||
+      this.props.user !== prevProps.user
+    ) {
+      this.getArticleVotes(this.props.user.username);
     }
   }
+  getArticleVotes = (username) => {
+    api.getUserArticleVotes(username).then((data) => {
+      if (data.votes.length > 0) {
+        const lookup = func.userVoteTransform(data.votes);
+        this.setState({ userVotes: lookup, newVotes: {} });
+      } else this.setState({ newVotes: {} });
+    });
+  };
+
+  didVote = (id, value) => {
+    const newVotes = { [id]: value };
+    this.setState({ newVotes });
+  };
   deleteArticle = (article_id) => {
     api.deletearticle(article_id).then((data) => {
       this.props.articleDeletedToggle(true);
     });
   };
 
-  voteArticle = (article_id, vote) => {
-    if (!this.props.user.articleVotes[article_id]) {
-      this.props.addArticleUserVotes(article_id, vote);
-      api.votearticle(article_id, vote).then(() => {
-        this.setState({ vote });
-      });
-    }
-  };
-  handleUpVote = (article_id) => {
-    const vote = 1;
-    this.voteArticle(article_id, vote);
-  };
-
-  handleDownVote = (article_id) => {
-    const vote = -1;
-    this.voteArticle(article_id, vote);
-  };
-
   handleDelete = (article_id) => {
     this.deleteArticle(article_id);
   };
+
   render() {
     const article = this.props.article;
+    const username = this.props.user.username;
+    const { newVotes, userVotes } = this.state;
+
     return (
-      <div>
+      <div className="mainArticleGrid">
         {article.image_url ? (
           <img
             className="mainArticleGrid__Image"
             src={article.image_url}
             alt=""
-            height="200px"
           ></img>
         ) : null}
-        <div className="mainArticleGrid">
-          <span className="mainArticleGrid__Title">{article.title}</span>
-          <span className="mainArticleGrid__Topic">Topic: {article.topic}</span>
+        <span className="mainArticleGrid__Title">{article.title}</span>
+        <span className="mainArticleGrid__Topic">Topic: {article.topic}</span>
 
-          <span className="mainArticleGrid__Created">
-            Posted: {new Date(article.created_at).toLocaleString()} By{" "}
-            {article.author}
-          </span>
-          <span className="mainArticleGrid__Body">{article.body}</span>
-          <span className="mainArticleGrid__Votes">
-            Votes: {article.votes + this.state.vote}
-          </span>
+        <span className="mainArticleGrid__Created">
+          Posted: {new Date(article.created_at).toLocaleString()} By{" "}
+          {article.author}
+        </span>
+        <span className="mainArticleGrid__Body">{article.body}</span>
+        <span className="mainArticleGrid__Votes">
+          {newVotes[article.article_id]
+            ? func.faces(article.votes + newVotes[article.article_id])
+            : func.faces(article.votes)}
+        </span>
 
-          {article.author !== this.props.user.username ? (
-            !this.props.user.articleVotes[article.article_id] ? (
-              <span className="mainArticleGrid__VoteButton">
-                {" "}
-                <button onClick={() => this.handleUpVote(article.article_id)}>
-                  +Vote
-                </button>{" "}
-                <button onClick={() => this.handleDownVote(article.article_id)}>
-                  -Vote
-                </button>{" "}
-              </span>
-            ) : (
-              <span className="mainArticleGrid__VoteButton">
-                you voted{" "}
-                {this.props.user.articleVotes[article.article_id] === 1
-                  ? "+"
-                  : "-"}
-              </span>
-            )
-          ) : (
-            <span className="mainArticleGrid__DeleteButton">
-              <button onClick={() => this.handleDelete(article.article_id)}>
-                Delete!
-              </button>{" "}
-            </span>
-          )}
-        </div>
+        {article.author !== username ? (
+          <span className="mainArticleGrid__VoteButton">
+            <Voting
+              didVote={this.didVote}
+              uservotes={userVotes}
+              voteTargetId={article.article_id}
+              voteTargetType="article"
+              username={username}
+            ></Voting>
+          </span>
+        ) : (
+          <span className="mainArticleGrid__DeleteButton">
+            <button onClick={() => this.handleDelete(article.article_id)}>
+              Delete!
+            </button>{" "}
+          </span>
+        )}
       </div>
     );
   }
