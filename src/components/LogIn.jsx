@@ -12,18 +12,26 @@ export default class LogIn extends Component {
   setValue = (value) => {
     if (value !== "select a user") {
       this.setState({ user: value });
+      this.setLocalStorage(value);
       this.loaduser(value);
     }
   };
 
+  setLocalStorage = (username) => {
+    localStorage.setItem("username", username);
+    console.log(localStorage.getItem("username"));
+  };
+
   componentDidMount() {
+    const user = localStorage.getItem("username");
+
+    if (user) this.setValue(user);
     this.loadUsers();
   }
 
   loadUsers = () => {
     api.getusers().then((data) => {
       const users = data.users;
-
       this.setState({ users, isloading: false });
     });
   };
@@ -31,10 +39,12 @@ export default class LogIn extends Component {
   loaduser = (user) => {
     api.getuser(user).then((data) => {
       this.props.setUser(data.user);
+      localStorage.setItem("username", data.user.username);
     });
   };
 
   render() {
+    const user = localStorage.getItem("username");
     const { users, isloading } = this.state;
     const { loggedinuser } = this.props;
     if (isloading) return <Loader></Loader>;
@@ -57,7 +67,7 @@ export default class LogIn extends Component {
             onChange={this.setValue}
           >
             <ListboxOption key={"select a user"} value={"select a user"}>
-              select a user
+              {user || "select a user"}
             </ListboxOption>
 
             {users.map((user) => {

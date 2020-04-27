@@ -6,7 +6,7 @@ import LogIn from "./components/LogIn";
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
 import SubDisplay from "./components/SubDisplay";
-import { Header } from "./components/Header";
+import Header from "./components/Header";
 
 class App extends React.Component {
   state = {

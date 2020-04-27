@@ -133,7 +133,7 @@ export default class Comments extends Component {
         <div
           className="commentsWrapper"
           style={{
-            height: "300px",
+            maxHeight: "200px",
             overflow: "scroll",
           }}
           onScroll={this.onScroll}

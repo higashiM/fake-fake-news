@@ -33,7 +33,7 @@ export default class ArticleCard extends Component {
   loadPage = () => {
     const article_id = this.props.article_id;
     const params = { article_id };
-    //window.scrollTo(0, 0);
+
     api
       .getarticles(params)
       .then((data) => {

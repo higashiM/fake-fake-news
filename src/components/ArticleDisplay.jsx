@@ -2,18 +2,16 @@ import React, { Component } from "react";
 import * as api from "../utils/api";
 import * as func from "../utils/functions";
 import Voting from "./Voting";
+import Loader from "./Loader";
 export default class ArticleDisplay extends Component {
-  state = { userVotes: "", newVotes: {} };
+  state = { userVotes: "", newVotes: {}, isloading: true };
 
   componentDidMount() {
     this.getArticleVotes(this.props.user.username);
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (
-      this.props.article !== prevProps.article ||
-      this.props.user !== prevProps.user
-    ) {
+    if (this.props.user !== prevProps.user) {
       this.getArticleVotes(this.props.user.username);
     }
   }
@@ -21,8 +19,8 @@ export default class ArticleDisplay extends Component {
     api.getUserArticleVotes(username).then((data) => {
       if (data.votes.length > 0) {
         const lookup = func.userVoteTransform(data.votes);
-        this.setState({ userVotes: lookup, newVotes: {} });
-      } else this.setState({ newVotes: {} });
+        this.setState({ userVotes: lookup, newVotes: {}, isloading: false });
+      } else this.setState({ newVotes: {}, isloading: false });
     });
   };
 
@@ -43,7 +41,7 @@ export default class ArticleDisplay extends Component {
   render() {
     const article = this.props.article;
     const username = this.props.user.username;
-    const { newVotes, userVotes } = this.state;
+    const { newVotes, userVotes, isloading } = this.state;
 
     return (
       <div className="mainArticleGrid">
@@ -69,18 +67,25 @@ export default class ArticleDisplay extends Component {
         </span>
 
         {article.author !== username ? (
-          <span className="mainArticleGrid__VoteButton">
-            <Voting
-              didVote={this.didVote}
-              uservotes={userVotes}
-              voteTargetId={article.article_id}
-              voteTargetType="article"
-              username={username}
-            ></Voting>
-          </span>
+          isloading ? (
+            <Loader />
+          ) : (
+            <span className="mainArticleGrid__VoteButton">
+              <Voting
+                didVote={this.didVote}
+                uservotes={userVotes}
+                voteTargetId={article.article_id}
+                voteTargetType="article"
+                username={username}
+              ></Voting>
+            </span>
+          )
         ) : (
           <span className="mainArticleGrid__DeleteButton">
-            <button onClick={() => this.handleDelete(article.article_id)}>
+            <button
+              className="deleteButton"
+              onClick={() => this.handleDelete(article.article_id)}
+            >
               Delete!
             </button>{" "}
           </span>

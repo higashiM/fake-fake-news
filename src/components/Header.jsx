@@ -1,5 +1,7 @@
-import React from "react";
+import React, { Component } from "react";
 
-export const Header = () => {
-  return <div className="header">FAKE-FAKE-NEWS</div>;
-};
+export default class Header extends Component {
+  render() {
+    return <div className="header">FAKE-FAKE-NEWS</div>;
+  }
+}

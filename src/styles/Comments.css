@@ -2,6 +2,14 @@
   color: black;
 }
 
+.thumbButton {
+  background-color: transparent;
+  border: none;
+}
+
+button:hover {
+  cursor: pointer;
+}
 .commentsGrid__Body {
   grid-area: body;
 }

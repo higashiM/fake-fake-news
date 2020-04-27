@@ -87,6 +87,7 @@ export default class Voting extends Component {
     return (
       <>
         <button
+          className="thumbButton"
           onClick={() =>
             this.handleVote(voteTargetId, voteTargetType, "Up", username)
           }
@@ -95,6 +96,7 @@ export default class Voting extends Component {
         </button>
         {"or"}
         <button
+          className="thumbButton"
           onClick={() =>
             this.handleVote(voteTargetId, voteTargetType, "Down", username)
           }
